@@ -1,0 +1,13 @@
+{
+	"dockerFile": "Dockerfile",
+	"build": {
+		"args": {
+			"WORKSPACE": "${containerWorkspaceFolder}"
+		}
+	},
+	"remoteUser": "ros",
+	"runArgs": [
+		"--network=host",
+		"--cap-add=SYS_PTRACE"
+    ]
+}
