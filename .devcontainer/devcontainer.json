@@ -10,5 +10,15 @@
 		"--network=host",
 		"--cap-add=SYS_PTRACE",
 		"--hostname=felix"
+    ],
+	"extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-python.python",
+        "ms-vscode.cpptools",
+        "twxs.cmake",
+        "ms-vscode.cmake-tools",
+        "ms-iot.vscode-ros",
+        "smilerobotics.urdf",
+        "yzhang.markdown-all-in-one"
     ]
 }
