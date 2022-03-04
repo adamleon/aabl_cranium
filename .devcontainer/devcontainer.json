@@ -9,7 +9,8 @@
 	"runArgs": [
 		"--network=host",
 		"--cap-add=SYS_PTRACE",
-		"--hostname=felix"
+		"--hostname=felix",
+		"--add-host=felix:127.0.0.1"
     ],
 	"extensions": [
         "ms-azuretools.vscode-docker",
