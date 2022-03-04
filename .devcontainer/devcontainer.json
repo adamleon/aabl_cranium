@@ -3,7 +3,8 @@
 	"build": {
 		"args": {
 			"WORKSPACE": "${containerWorkspaceFolder}",
-			"USERNAME": "ros"
+			"USERNAME": "ros",
+			"ssh":"default"
 		}
 	},
 	"runArgs": [
