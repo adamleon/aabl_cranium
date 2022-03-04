@@ -1,9 +1,11 @@
 FROM ros:galactic-ros-core-focal
 
-# Add sudo user
+# Install packages
 RUN apt-get update && \
-      apt-get -y install sudo
+      apt-get -y install sudo git
 
+
+# Add sudo user
 ARG USERNAME
 RUN adduser --disabled-login $USERNAME \
         && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USERNAME \

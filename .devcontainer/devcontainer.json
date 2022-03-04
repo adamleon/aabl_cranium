@@ -9,5 +9,6 @@
 	"runArgs": [
 		"--network=host",
 		"--cap-add=SYS_PTRACE"
+		"--hostname=felix"
     ]
 }
