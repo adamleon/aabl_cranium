@@ -2,7 +2,7 @@ FROM ros:galactic-ros-core-focal
 
 # Install packages
 RUN apt-get update && \
-      apt-get -y install sudo git
+      apt-get -y install sudo git gcc
 
 
 # Add sudo user
