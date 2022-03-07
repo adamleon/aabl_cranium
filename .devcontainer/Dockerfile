@@ -2,7 +2,8 @@ FROM ros:galactic-ros-core-focal
 
 # Install packages
 RUN apt-get update && \
-      apt-get -y install sudo git gcc
+      apt-get -y install sudo git gcc && \
+      sudo apt -y install ros-galactic-moveit ros-galactic-ros2-control ros-galactic-ros2-controllers
 
 
 # Add sudo user
