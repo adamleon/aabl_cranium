@@ -1,7 +1,9 @@
 #!/bin/bash
 
-source /opt/ros/humble/setup.bash
-echo "/opt/ros/humble/setup.bash" >> ~/.bashrc
-# source ~/workspaces/ros2_vscode_ws/install/setup.bash
+cd /dagros
+wget https://raw.githubusercontent.com/KCL-BMEIS/lbr_fri_ros2_stack/humble/lbr_fri_ros2_stack/repos.yml -P src
+vcs import src < src/repos.yml
 
 echo "Hello this was running"
+
+tail -f /dev/null

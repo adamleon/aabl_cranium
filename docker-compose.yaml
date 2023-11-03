@@ -3,8 +3,6 @@ services:
     container_name: dagros
     build: .
     network_mode: "host"
-    entrypoint: ./ros_entrypoint.sh
-    command: tail -f /dev/null
     volumes:
       - \\wsl$\Ubuntu-20.04\tmp\.X11-unix:/tmp/.X11-unix
       - \\wsl$\Ubuntu-20.04\usr\lib\wsl:/usr/lib/wsl
