@@ -8,3 +8,11 @@ The ROS2 packages used in this project:
 - [ROS2 RViz](https://github.com/ros2/rviz)
 - [ROS2_control](https://control.ros.org/master/index.html)
 - [lbr_fri_ros2_stack](https://github.com/lbr-stack/lbr_fri_ros2_stack)
+
+## Installation
+
+Step 1: Create the Docker image
+Make sure WSL is configured
+```
+docker compose up
+```

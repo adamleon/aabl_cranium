@@ -1,9 +1,14 @@
 services: 
   dagros:
     container_name: dagros
-    build: .
+    build: 
+      context: ../
+      dockerfile: ./docker/Dockerfile
+      ssh:
+        - default
     network_mode: "host"
     volumes:
+      - ~\.ssh\id_rsa:/root/.ssh/id_rsa:ro
       - \\wsl$\Ubuntu-20.04\tmp\.X11-unix:/tmp/.X11-unix
       - \\wsl$\Ubuntu-20.04\usr\lib\wsl:/usr/lib/wsl
       - \\wsl$\Ubuntu-20.04\mnt\wslg:/mnt/wslg
