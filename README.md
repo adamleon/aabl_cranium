@@ -14,5 +14,5 @@ The ROS2 packages used in this project:
 Step 1: Create the Docker image
 Make sure WSL is configured
 ```
-docker compose up
+.\docker\docker compose up
 ```
