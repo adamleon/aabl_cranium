@@ -14,4 +14,6 @@ colcon build --packages-skip cartesian_controller_simulation cartesian_controlle
 
 echo ". /dagros_ws/install/setup.bash" >> ~/.bashrc
 
+echo "{\033[0;32m}ÅBL Robot Arm Architecture is finished installed"
+
 tail -f /dev/null
