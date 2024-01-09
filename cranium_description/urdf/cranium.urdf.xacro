@@ -3,174 +3,48 @@
 <!-- top level -->
 <robot name="med14" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <!-- include the lbr med macro -->
+    <!-- include macros -->
     <xacro:include filename="$(find lbr_description)/urdf/med14/med14_description.urdf.xacro" />
+    <xacro:include filename="$(find cranium_description)/urdf/robot_pedestal.urdf.xacro" />
+    <xacro:include filename="$(find cranium_description)/urdf/ankle_base.urdf.xacro" />
+    <xacro:include filename="$(find cranium_description)/urdf/materials.xacro" />
 
     <xacro:arg name="robot_name" default="lbr" />
     <xacro:arg name="port_id" default="30200" />
     <xacro:arg name="sim" default="true" />
 
-    <!-- pedestal -->
+    <xacro:property name="pedestal_prefix" value="robot_" />
+    <xacro:property name="work_area_prefix" value="wa_" />
+
+
     <link name="world" />
-
-    <link name="foot_link">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 0.0115" />
-            <geometry>
-                <box size="1 1 0.023"/>
-            </geometry>
-            <material name="black_pedestal">
-                <color rgba="0 0 0 1" />
-            </material>
-        </visual>
-        <collision>
-            <origin rpy="0 0 0" xyz="0 0 0.0115" />
-            <geometry>
-                <box size="1 1 0.023"/>
-            </geometry>
-        </collision>
-    </link>
-    <link name="mid_foot_link">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 0.0115" />
-            <geometry>
-                <box size="0.5 0.5 0.023"/>
-            </geometry>
-            <material name="black_pedestal">
-                <color rgba="0 0 0 1" />
-            </material>
-        </visual>
-        <collision>
-            <origin rpy="0 0 0" xyz="0 0 0.0115" />
-            <geometry>
-                <box size="0.5 0.5 0.023"/>
-            </geometry>
-        </collision>
-    </link>
-    <link name="pedestal_link">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 0.35" />
-            <geometry>
-                <cylinder length="0.7" radius="0.075"/>
-            </geometry>
-            <material name="black_pedestal">
-                <color rgba="0 0 0 1" />
-            </material>
-        </visual>
-        <collision>
-            <origin rpy="0 0 0" xyz="0 0 0.35" />
-            <geometry>
-                <cylinder length="0.7" radius="0.075"/>
-            </geometry>
-        </collision>
-    </link>
-    <link name="base_link">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 0.0085" />
-            <geometry>
-                <cylinder length="0.017" radius="0.15"/>
-            </geometry>
-            <material name="black_pedestal">
-                <color rgba="0 0 0 1" />
-            </material>
-        </visual>
-    </link>
-
-    <!-- pedestal joints -->
-    <joint name="world_foot_joint" type="fixed">
+    
+    <!-- pedestal -->
+    <xacro:robot_pedestal prefix="${pedestal_prefix}" />
+    <joint name="pedestal_joint" type="fixed">
         <parent link="world" />
-        <child link="foot_link" />
+        <child link="${pedestal_prefix}foot_link" />
         <origin rpy="0 0 0" xyz="0.0 0.0 0" />
     </joint>
-    <joint name="foot_mid_foot_joint" type="fixed">
-        <parent link="foot_link" />
-        <child link="mid_foot_link" />
-        <origin rpy="0 0 0" xyz="0.0 0.0 0.023" />
-    </joint>
-    <joint name="mid_foot_pedestal_joint" type="fixed">
-        <parent link="mid_foot_link" />
-        <child link="pedestal_link" />
-        <origin rpy="0 0 0" xyz="0.0 0.0 0.023" />
-    </joint>
-    <joint name="pedestal_base_joint" type="fixed">
-        <parent link="pedestal_link" />
-        <child link="base_link" />
-        <origin rpy="0 0 0" xyz="0.0 0.0 0.7" />
-    </joint>
     
-    <!-- work area links -->
-    <link name="wa_foot_link">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 0.0105" />
-            <geometry>
-                <box size="0.32 0.32 0.021"/>
-            </geometry>
-            <material name="black_pedestal">
-                <color rgba="0 0 0 1" />
-            </material>
-        </visual>
-        <collision>
-            <origin rpy="0 0 0" xyz="0 0 0.0105" />
-            <geometry>
-                <box size="0.32 0.32 0.021"/>
-            </geometry>
-        </collision>
-    </link>
-    <link name="wa_mid_foot_link">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 0.3535" />
-            <geometry>
-                <box size="0.16 0.16 0.707"/>
-            </geometry>
-            <material name="alu_pedestal">
-                <color rgba="0.8 0.8 0.8 1" />
-            </material>
-        </visual>
-        <collision>
-            <origin rpy="0 0 0" xyz="0 0 0.3535" />
-            <geometry>
-                <box size="0.16 0.16 0.707"/>
-            </geometry>
-        </collision>
-    </link>
-    <link name="work_area_link">
-        <visual>
-            <origin rpy="0 0 0" xyz="0.155 0.08 -0.01" />
-            <geometry>
-                <box size="0.31 0.16 0.02"/>
-            </geometry>
-            <material name="alu_pedestal">
-                <color rgba="0.8 0.8 0.8 1" />
-            </material>
-        </visual>
-        <collision>
-            <origin rpy="0 0 0" xyz="0.155 0.08 -0.01" />
-            <geometry>
-                <box size="0.31 0.16 0.02"/>
-            </geometry>
-        </collision>
-    </link>
-
-    <!-- work area joints -->
-    <joint name="world_wa_foot_joint" type="fixed">
+    <!-- ankle base -->
+    <xacro:ankle_base prefix="${work_area_prefix}" />
+    <joint name="ankle_base_joint" type="fixed">
         <parent link="world" />
-        <child link="wa_foot_link" />
+        <child link="${work_area_prefix}foot_link" />
         <origin rpy="0 0 ${pi}" xyz="1.0 0.0 0" />
     </joint>
-    <joint name="wa_foot_mid_foot_joint" type="fixed">
-        <parent link="wa_foot_link" />
-        <child link="wa_mid_foot_link" />
-        <origin rpy="0 0 0" xyz="0.0 0.0 0.021" />
+    <!-- work area orgin -->
+    <joint name="work_area_joint" type="fixed">
+        <parent link="${work_area_prefix}work_area_link" />
+        <child link="work_area_base" />
+        <origin rpy="0 0 0" xyz="-0.155 -0.08 0" />
     </joint>
-    <joint name="wa_mid_foot_work_area_joint" type="fixed">
-        <parent link="wa_mid_foot_link" />
-        <child link="work_area_link" />
-        <origin rpy="0 0 0" xyz="-0.08 -0.08 0.717" />
-    </joint>
-
+    <link name="work_area_base" />
+    
     <!-- robot -->
     <joint name="base_joint" type="fixed">
-        <parent link="base_link" />
+        <parent link="robot_base_link" />
         <child link="link_0" />
         <origin rpy="0 0 ${pi/2}" xyz="0.0 0.0 0" />
     </joint>
