@@ -6,6 +6,13 @@ RUN apt install -y x11-apps && \
     apt install -y mesa-utils
 RUN apt install -y net-tools
 RUN apt install -y wget
+RUN apt install -y git
+RUN apt install -y python3-vcstool
+
+# Install VCPKG
+RUN apt install -y curl zip unzip tar
+RUN git clone https://github.com/microsoft/vcpkg
+RUN ./vcpkg/bootstrap-vcpkg.sh
 
 # OpenGL bug fix
 RUN apt install -y software-properties-common
@@ -22,8 +29,8 @@ RUN apt install -y ros-humble-moveit
 RUN echo ". /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 # ROS2 repos
-COPY src /dagros_ws/src
-RUN cd dagros_ws/src
+RUN mkdir -p /dagros_ws/src/3rd_party
+RUN cd /dagros_ws/src/3rd_party
 
 #RUN git clone git@github.com:lbr-stack/lbr_fri_ros2_stack.git
 #RUN git clone -b ros2 git@github.com:fzi-forschungszentrum-informatik/cartesian_controllers.git
@@ -34,6 +41,4 @@ RUN cd dagros_ws/src
 # WSL
 ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
 
-COPY entrypoint.sh /setup/entrypoint.sh
-
-ENTRYPOINT ["/setup/entrypoint.sh"]
+ENTRYPOINT ["/dagros_ws/src/aabl_cranium/entrypoint.sh"]

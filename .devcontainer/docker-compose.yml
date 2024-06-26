@@ -1,0 +1,14 @@
+version: '1'
+services:
+  cranium:
+    build:
+      context: ../
+      dockerfile: .devcontainer/Dockerfile
+      ssh:
+        - default
+    network_mode: host
+    volumes:
+      - "../:/dagros_ws/src/aabl_cranium/"
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+      - "/mnt/wslg:/mnt/wslg"
+      - "/usr/lib/wsl:/usr/lib/wsl"
