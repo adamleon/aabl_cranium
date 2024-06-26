@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<!-- top level -->
+<robot name="med14" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- include macros -->
+    <xacro:include filename="$(find lbr_description)/urdf/med14/med14_description.urdf.xacro" />
+    <xacro:include filename="$(find cranium_description)/urdf/robot_pedestal.urdf.xacro" />
+    <xacro:include filename="$(find cranium_description)/urdf/ankle_base.urdf.xacro" />
+    <xacro:include filename="$(find cranium_description)/urdf/materials.xacro" />
+
+    <xacro:arg name="robot_name" default="lbr" />
+    <xacro:arg name="port_id" default="30200" />
+    <xacro:arg name="sim" default="true" />
+
+    <xacro:property name="pedestal_prefix" value="robot_" />
+    <xacro:property name="work_area_prefix" value="wa_" />
+
+
+    <link name="world" />
+    
+    <!-- pedestal -->
+    <xacro:robot_pedestal prefix="${pedestal_prefix}" />
+    <joint name="pedestal_joint" type="fixed">
+        <parent link="world" />
+        <child link="${pedestal_prefix}foot_link" />
+        <origin rpy="0 0 0" xyz="0.0 0.0 0" />
+    </joint>
+    
+    <!-- ankle base -->
+    <xacro:ankle_base prefix="${work_area_prefix}" />
+    <joint name="ankle_base_joint" type="fixed">
+        <parent link="world" />
+        <child link="${work_area_prefix}foot_link" />
+        <origin rpy="0 0 ${pi}" xyz="1.0 0.0 0" />
+    </joint>
+    <!-- work area orgin -->
+    <joint name="work_area_joint" type="fixed">
+        <parent link="${work_area_prefix}work_area_link" />
+        <child link="work_area_base" />
+        <origin rpy="0 0 0" xyz="-0.155 -0.08 0" />
+    </joint>
+    <link name="work_area_base" />
+    
+    <!-- robot -->
+    <joint name="base_joint" type="fixed">
+        <parent link="robot_base_link" />
+        <child link="link_0" />
+        <origin rpy="0 0 ${pi/2}" xyz="0.0 0.0 0" />
+    </joint>
+    <xacro:med14 robot_name="$(arg robot_name)" port_id="$(arg port_id)" sim="$(arg sim)" />
+    
+</robot>

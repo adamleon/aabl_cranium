@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<!-- color materials for cranium -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- black color -->
+    <material name="black">
+        <color rgba="0.0 0.0 0.0 1.0"/>
+    </material>
+
+    <!-- aluminum color -->
+    <material name="aluminium">
+        <color rgba="0.8 0.8 0.8 1.0" />
+    </material>
+</robot>

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+
+<!-- pedestal which the robot stands on -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- xacro pedestal -->
+    <xacro:macro name="robot_pedestal" params="prefix">
+        <!-- pedestal links -->
+        <link name="${prefix}foot_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0.0115" />
+                <geometry>
+                    <box size="1 1 0.023"/>
+                </geometry>
+                <material name="black" />
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0.0115" />
+                <geometry>
+                    <box size="1 1 0.023"/>
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}mid_foot_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0.0115" />
+                <geometry>
+                    <box size="0.5 0.5 0.023"/>
+                </geometry>
+                <material name="black" />
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0.0115" />
+                <geometry>
+                    <box size="0.5 0.5 0.023"/>
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}column_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0.35" />
+                <geometry>
+                    <cylinder length="0.7" radius="0.075"/>
+                </geometry>
+                <material name="black" />
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0.35" />
+                <geometry>
+                    <cylinder length="0.7" radius="0.075"/>
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}base_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0.0085" />
+                <geometry>
+                    <cylinder length="0.017" radius="0.15"/>
+                </geometry>
+                <material name="black" />
+            </visual>
+        </link>
+
+        <!-- pedestal joints -->
+        <joint name="${prefix}foot_joint" type="fixed">
+            <parent link="${prefix}foot_link" />
+            <child link="${prefix}mid_foot_link" />
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.023" />
+        </joint>
+        <joint name="${prefix}foot_column_joint" type="fixed">
+            <parent link="${prefix}mid_foot_link" />
+            <child link="${prefix}column_link" />
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.023" />
+        </joint>
+        <joint name="${prefix}column_base_joint" type="fixed">
+            <parent link="${prefix}column_link" />
+            <child link="${prefix}base_link" />
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.7" />
+        </joint>
+    </xacro:macro>
+</robot>

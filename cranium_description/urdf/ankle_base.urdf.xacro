@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+
+<!-- top level -->
+<robot name="med14" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- xacro ankle base -->
+    <xacro:macro name="ankle_base" params="prefix">
+        <!-- work area links -->
+        <link name="${prefix}foot_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0.0105" />
+                <geometry>
+                    <box size="0.32 0.32 0.021" />
+                </geometry>
+                <material name="black" />
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0.0105" />
+                <geometry>
+                    <box size="0.32 0.32 0.021" />
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}mid_foot_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0.3535" />
+                <geometry>
+                    <box size="0.16 0.16 0.707" />
+                </geometry>
+                <material name="aluminium" />
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0.3535" />
+                <geometry>
+                    <box size="0.16 0.16 0.707" />
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}work_area_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0.0 0.0 -0.01" />
+                <geometry>
+                    <box size="0.31 0.16 0.02" />
+                </geometry>
+                <material name="black" />
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0.0 0.0 -0.01" />
+                <geometry>
+                    <box size="0.31 0.16 0.02" />
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- work area joints -->
+        <joint name="${prefix}foot_joint" type="fixed">
+            <parent link="${prefix}foot_link" />
+            <child link="${prefix}mid_foot_link" />
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.021" />
+        </joint>
+        <joint name="${prefix}foot_work_area_joint" type="fixed">
+            <parent link="${prefix}mid_foot_link" />
+            <child link="${prefix}work_area_link" />
+            <origin rpy="0 0 0" xyz="0.075 0.0 0.727" />
+        </joint>
+
+    </xacro:macro>
+</robot>
