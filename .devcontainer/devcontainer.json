@@ -1,6 +1,6 @@
 {
 	"dockerComposeFile": [ "docker-compose.yml" ],
-	"workspaceFolder": "/dagros_ws/src/aabl_cranium",
+	"workspaceFolder": "/workspaces/dagros_ws/src/aabl_cranium",
 	"service": "cranium",
 	"customizations": {
 		"vscode": {

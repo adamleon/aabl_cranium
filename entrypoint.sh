@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /opt/ros/humble/setup.bash
+# . /opt/ros/humble/setup.bash
 
 #cd /dagros_ws/src
 #git clone -b ros2 https://github.com/fzi-forschungszentrum-informatik/cartesian_controllers.git
