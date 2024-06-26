@@ -4,13 +4,14 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/opt/ros/humble/include/**"
+                "/opt/ros/humble/include/**",
+                "/dagros_ws/install/cranium_gui/**",
+                "/dagros_ws/build/cranium_gui/vcpkg_installed/x64-linux/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
             "cStandard": "c99",
-            "cppStandard": "c++14",
+            "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
         }
     ],

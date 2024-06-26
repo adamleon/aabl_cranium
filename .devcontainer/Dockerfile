@@ -32,11 +32,11 @@ RUN echo ". /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN mkdir -p /dagros_ws/src/3rd_party
 RUN cd /dagros_ws/src/3rd_party
 
-#RUN git clone git@github.com:lbr-stack/lbr_fri_ros2_stack.git
-#RUN git clone -b ros2 git@github.com:fzi-forschungszentrum-informatik/cartesian_controllers.git
-#RUN rosdep install --from-paths ./ --ignore-src -y
-#RUN cd ..
-#RUN colcon build --packages-skip cartesian_controller_simulation cartesian_controller_tests --cmake-args -DCMAKE_BUILD_TYPE=Release
+RUN git clone git@github.com:lbr-stack/lbr_fri_ros2_stack.git
+RUN git clone -b ros2 git@github.com:fzi-forschungszentrum-informatik/cartesian_controllers.git
+RUN rosdep install --from-paths ./ --ignore-src -y
+RUN cd /dagros_ws
+RUN colcon build --packages-skip cartesian_controller_simulation cartesian_controller_tests --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 # WSL
 ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
