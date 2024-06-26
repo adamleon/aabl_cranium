@@ -17,6 +17,7 @@ RUN apt upgrade -y
 RUN apt install -y ros-humble-rviz2
 RUN apt install -y ros-humble-ros2-control && \
     apt install -y ros-humble-ros2-controllers
+RUN apt install -y ros-humble-moveit
 
 RUN echo ". /opt/ros/humble/setup.bash" >> ~/.bashrc
 
