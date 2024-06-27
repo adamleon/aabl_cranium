@@ -8,11 +8,10 @@ The ROS2 packages used in this project:
 - [ROS2 RViz](https://github.com/ros2/rviz)
 - [ROS2_control](https://control.ros.org/master/index.html)
 - [lbr_fri_ros2_stack](https://github.com/lbr-stack/lbr_fri_ros2_stack)
+- [threepp](https://github.com/markaren/threepp)
+- [Dear Imgui](https://github.com/ocornut/imgui)
 
 ## Installation
+Make sure WSL2 is configured and Docker is installed
 
-Step 1: Create the Docker image
-Make sure WSL is configured
-```
-.\docker\docker compose up
-```
+Open the repo as a Dev Container in VSCode

@@ -3,10 +3,10 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/cranium_gui/include/**",
                 "/opt/ros/humble/include/**",
-                "/dagros_ws/install/cranium_gui/**",
-                "/dagros_ws/build/cranium_gui/vcpkg_installed/x64-linux/include/**"
+                "/workspaces/dagros_ws/install/cranium_gui/**",
+                "/workspaces/dagros_ws/build/cranium_gui/vcpkg_installed/x64-linux/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

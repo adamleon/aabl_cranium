@@ -10,16 +10,10 @@
 #include "imgui.h"
 #include "threepp/threepp.hpp"
 
+#include "cranium_gui/gui_menu.hpp"
 
 using namespace std::chrono_literals;
 using namespace threepp;
-
-class ThreePPNode : public rclcpp::Node {
-public:
-    ThreePPNode() : Node("threepp_node") {
-        
-    }
-};
 
 class TalkerNode : public rclcpp::Node {
 public:
@@ -47,27 +41,30 @@ int main(int argc, char **argv) {
     std::thread t([]() {
         rclcpp::spin(std::make_shared<TalkerNode>());
     });
-    
+
+
     Canvas canvas("threepp demo");
-        GLRenderer renderer(canvas.size());
-        renderer.autoClear = false;
+    GLRenderer renderer(canvas.size());
+    renderer.autoClear = false;
 
-        auto scene = Scene::create();
-        scene->background = Color::aliceblue;
-        auto camera = PerspectiveCamera::create(75, canvas.aspect(), 0.1f, 1000);
-        camera->position.z = 5;
+    auto scene = Scene::create();
+    scene->background = Color::aliceblue;
+    auto camera = PerspectiveCamera::create(75, canvas.aspect(), 0.1f, 1000);
+    camera->position.z = 5;
+    Menu menu(canvas);
 
-        canvas.onWindowResize([&](WindowSize size) {
-            camera->aspect = size.aspect();
-            camera->updateProjectionMatrix();
-            renderer.setSize(size);
-        });
+    canvas.onWindowResize([&](WindowSize size) {
+        camera->aspect = size.aspect();
+        camera->updateProjectionMatrix();
+        renderer.setSize(size);
+    });
 
-        Clock clock;
-        canvas.animate([&]() {
-            renderer.clear();
-            renderer.render(*scene, *camera);
-        });
+    Clock clock;
+    canvas.animate([&]() {
+        renderer.clear();
+        renderer.render(*scene, *camera);
+        menu.render();
+    });
 
     rclcpp::shutdown();
 }
