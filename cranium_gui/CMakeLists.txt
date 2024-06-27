@@ -23,7 +23,7 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
-add_executable(cranium_gui src/gui_main.cpp)
+add_executable(cranium_gui src/gui_main.cpp src/gui_context.cpp)
 ament_target_dependencies(cranium_gui rclcpp std_msgs)
 target_link_libraries(cranium_gui imgui::imgui threepp::threepp)
 

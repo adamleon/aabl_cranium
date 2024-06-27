@@ -7,10 +7,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
-#include "imgui.h"
-#include "threepp/threepp.hpp"
 
 #include "cranium_gui/gui_menu.hpp"
+#include "cranium_gui/gui_context.hpp"
 
 using namespace std::chrono_literals;
 using namespace threepp;
@@ -42,29 +41,16 @@ int main(int argc, char **argv) {
         rclcpp::spin(std::make_shared<TalkerNode>());
     });
 
+    auto context = GuiFunctionalContext([]{});
 
-    Canvas canvas("threepp demo");
-    GLRenderer renderer(canvas.size());
-    renderer.autoClear = false;
+    // auto scene = context.addScene("default");
+    // scene->background = threepp::Color::aliceblue;
+    
+    // auto camera = threepp::PerspectiveCamera::create(75, context.getCanvas()->aspect(), 0.1f, 1000);
+    // camera->position.z = 5;
+    // context.addCamera("default", camera);
 
-    auto scene = Scene::create();
-    scene->background = Color::aliceblue;
-    auto camera = PerspectiveCamera::create(75, canvas.aspect(), 0.1f, 1000);
-    camera->position.z = 5;
-    Menu menu(canvas);
-
-    canvas.onWindowResize([&](WindowSize size) {
-        camera->aspect = size.aspect();
-        camera->updateProjectionMatrix();
-        renderer.setSize(size);
-    });
-
-    Clock clock;
-    canvas.animate([&]() {
-        renderer.clear();
-        renderer.render(*scene, *camera);
-        menu.render();
-    });
+    context.render();
 
     rclcpp::shutdown();
 }
