@@ -1,64 +1,63 @@
 #include "cranium_gui/gui_context.hpp"
 
-void GuiContext::render()
-{
-    auto wrapperFunction = [](
-            std::unordered_map<std::shared_ptr<threepp::Scene>, std::shared_ptr<threepp::Camera>> cameras, 
-            std::shared_ptr<threepp::GLRenderer> renderer) {
-                std::cout << "Amount of cameras in wrapper: " << cameras.size() << std::endl;
-            return [&]() {
-                renderer->clear();
-                std::cout << "Amount of cameras: " << cameras.size() << std::endl;
-                for (auto &[scene, camera] : cameras) {
-                    std::cout << "Rendering scene" << std::endl;
-                    renderer->render(*scene, *camera);
-                }
-        };
-    };
-
-    auto lambdaFunction = wrapperFunction(GuiContext::m_cameras, GuiContext::m_renderer);
+void GuiManager::onAnimation() {
+    s_renderer->clear();
+    for (auto &[scene, camera] : s_cameras) {
+        s_renderer->render(*scene, *camera);
+    }
     
-    std::cout << "Amount of cameras in Renderer: " << GuiContext::m_cameras.size() << std::endl;
+    glfwPollEvents();
+    
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    
+    ImGui::SetNextWindowPos({0, 0}, 0, {0, 0});
+    ImGui::SetNextWindowSize({230, 0}, 0);
 
-    GuiContext::m_canvas->animate(lambdaFunction);
+    for (auto &[name, callback] : s_onRenderCallbacks)
+    {
+        callback();
+    }
 
-    // ImGui_ImplOpenGL3_NewFrame();
-    // ImGui_ImplGlfw_NewFrame();
-    // ImGui::NewFrame();
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGuiIO &io = ImGui::GetIO();
 
-    onRender();
-
-    // ImGui::Render();
-    // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    // Update and Render additional Platform Windows
+    // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+    //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
+    }
 }
 
-void GuiContext::initCanvas()
+void GuiManager::render()
+{   
+    GuiManager::s_canvas->animate( std::bind(&GuiManager::onAnimation, this));
+}
+
+void GuiManager::initCanvas()
 {
-    GuiContext::m_canvas = std::make_unique<threepp::Canvas>("Canvas");
-    GuiContext::m_renderer = std::make_unique<threepp::GLRenderer>(GuiContext::m_canvas->size());
-    GuiContext::m_renderer->autoClear = false;
+    GuiManager::s_canvas = std::make_shared<threepp::Canvas>("Canvas");
+    GuiManager::s_renderer = std::make_shared<threepp::GLRenderer>(GuiManager::s_canvas->size());
+    GuiManager::s_renderer->autoClear = false;
 
-    GuiContext::m_scenes["default"] = threepp::Scene::create();
-    auto scene = GuiContext::m_scenes["default"];
-    scene->background = threepp::Color::aliceblue;
-    
-    auto camera = threepp::PerspectiveCamera::create(75, m_canvas->aspect(), 0.1f, 1000);
-    camera->position.z = 5;
-    GuiContext::m_cameras[scene] = camera;
-
-    std::cout << "Amount of cameras: " << GuiContext::m_cameras.size() << std::endl; 
-
-    GuiContext::m_canvas->onWindowResize([&](threepp::WindowSize size) {
-        for (auto &[scene, camera] : GuiContext::m_cameras) {
+    GuiManager::s_canvas->onWindowResize([&](threepp::WindowSize size) {
+        for (auto &[scene, camera] : GuiManager::s_cameras) {
             if(typeid(*camera) == typeid(threepp::PerspectiveCamera))
-                dynamic_cast<std::shared_ptr<threepp::PerspectiveCamera>&>(*camera)->aspect = size.aspect();
+                (std::static_pointer_cast<threepp::PerspectiveCamera>(camera))->aspect = size.aspect();
             camera->updateProjectionMatrix();
         }
-        GuiContext::m_renderer->setSize(size);
+        GuiManager::s_renderer->setSize(size);
     });
 }
 
-void GuiContext::initImgui()
+void GuiManager::initImgui()
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -81,7 +80,7 @@ void GuiContext::initImgui()
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 
-    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *)m_canvas->windowPtr(), true);
+    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *)s_canvas->windowPtr(), true);
 #if EMSCRIPTEN
     ImGui_ImplOpenGL3_Init("#version 300 es");
 #else

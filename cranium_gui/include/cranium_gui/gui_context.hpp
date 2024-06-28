@@ -9,71 +9,72 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include <GLFW/glfw3.h>
 #include "threepp/threepp.hpp"
 
 /*!
  * @brief GUI context class which creates a new ImGui context and handles rendering
 */
-class GuiContext {
+class GuiManager {
 public:
-    explicit GuiContext() {
+    GuiManager() {
         initCanvas();
-        //initImgui();
+        initImgui();
     }
 
-    GuiContext(GuiContext&&) = delete;
-    GuiContext(const GuiContext&) = delete;
-    GuiContext& operator=(const GuiContext&) = delete;
+    GuiManager(GuiManager&&) = delete;
+    GuiManager(const GuiManager&) = delete;
+    GuiManager& operator=(const GuiManager&) = delete;
 
     std::shared_ptr<threepp::Canvas>& getCanvas() {
-        return GuiContext::m_canvas;
+        return GuiManager::s_canvas;
     }
 
     void render();
 
+    bool addOnRenderCallback(std::string name, std::function<void()> callback) {
+        if(callback == nullptr)
+            throw std::runtime_error("Callback is null");
+        if(GuiManager::s_onRenderCallbacks.find(name) != GuiManager::s_onRenderCallbacks.end())
+            return false;
+        GuiManager::s_onRenderCallbacks[name] = callback;
+        return true;
+    }
+
+    bool removeOnRenderCallback(std::string name) {
+        if(GuiManager::s_onRenderCallbacks.find(name) == GuiManager::s_onRenderCallbacks.end())
+            return false;
+        GuiManager::s_onRenderCallbacks.erase(name);
+        return true;
+    }
+
     std::shared_ptr<threepp::Scene> addScene(const std::string& name) {
-        GuiContext::m_scenes[name] = threepp::Scene::create();
-        return GuiContext::m_scenes[name];
+        GuiManager::s_scenes[name] = threepp::Scene::create();
+        return GuiManager::s_scenes[name];
     }
 
     void addCamera(const std::string& sceneName, const std::shared_ptr<threepp::Camera>& camera) {
-        if(GuiContext::m_scenes.find(sceneName) == GuiContext::m_scenes.end()) throw std::runtime_error("Scene not found");
-        GuiContext::m_cameras[GuiContext::m_scenes[sceneName]] = camera;
+        if(GuiManager::s_scenes.find(sceneName) == GuiManager::s_scenes.end()) throw std::runtime_error("Scene not found");
+        GuiManager::s_cameras[GuiManager::s_scenes[sceneName]] = camera;
     }
 
-    ~GuiContext() {
-        // ImGui_ImplOpenGL3_Shutdown();
-        // ImGui_ImplGlfw_Shutdown();
-        // ImGui::DestroyContext();
-    }
-
-protected:
-    virtual void onRender() = 0;
-
-    inline static std::shared_ptr<threepp::Canvas> m_canvas;
-    inline static std::shared_ptr<threepp::GLRenderer> m_renderer;
-    inline static std::unordered_map<std::string, std::shared_ptr<threepp::Scene>> m_scenes;
-    inline static std::unordered_map<std::shared_ptr<threepp::Scene>, std::shared_ptr<threepp::Camera>> m_cameras;
-
-    void initCanvas();
-    void initImgui();
-};
-
-class GuiFunctionalContext: public GuiContext {
-
-public:
-    explicit GuiFunctionalContext(std::function<void()> f)
-        : GuiContext(),
-          f_(std::move(f)) {}
-
-
-protected:
-    void onRender() override {
-        f_();
+    ~GuiManager() {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 
 private:
-    std::function<void()> f_;
+    inline static std::shared_ptr<threepp::Canvas> s_canvas;
+    inline static std::shared_ptr<threepp::GLRenderer> s_renderer;
+    inline static std::unordered_map<std::string, std::shared_ptr<threepp::Scene>> s_scenes;
+    inline static std::unordered_map<std::shared_ptr<threepp::Scene>, std::shared_ptr<threepp::Camera>> s_cameras;
+    inline static std::unordered_map<std::string, std::function<void()>> s_onRenderCallbacks = {};
+
+    void initCanvas();
+    void initImgui();
+
+    void onAnimation();
 };
 
 #endif // GUI_CONTEXT_HPP
