@@ -9,13 +9,15 @@
 
 
 #include "cranium_gui/gui_menu.hpp"
-#include "cranium_gui/gui_context.hpp"
+#include "cranium_gui/gui_manager.hpp"
+#include "cranium_gui/ros_listener_prototype.hpp"
 
 using namespace std::chrono_literals;
 
 class TalkerNode : public rclcpp::Node {
 public:
     TalkerNode() : Node("talker_node") {
+        count = 0;
         publisher_ = this->create_publisher<std_msgs::msg::String>("chatter", 10);
         timer_ = this->create_wall_timer(
             500ms, std::bind(&TalkerNode::timer_callback, this));
@@ -24,67 +26,53 @@ public:
 private:
     void timer_callback() {
         auto message = std_msgs::msg::String();
-        message.data = "Hello, world!";
+        message.data = "Hello, world! " + std::to_string(count++);
         RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
         publisher_->publish(message);
     }
 
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
     rclcpp::TimerBase::SharedPtr timer_;
+    int count;
 };
 
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
 
-    std::thread t([]() {
-        rclcpp::spin(std::make_shared<TalkerNode>());
+    std::shared_ptr<GuiManager> manager = std::make_shared<GuiManager>();
+
+    auto talker = std::make_shared<TalkerNode>();
+    auto listener = std::make_shared<ListenerNode>(manager);
+
+    std::thread t([talker, listener]() {
+        rclcpp::executors::SingleThreadedExecutor executor;
+        executor.add_node(talker);
+        executor.add_node(listener);
+        executor.spin();
     });
 
-    auto manager = GuiManager();
-    
-    manager.addOnRenderCallback("test", [](){
-        static float f = 2.0f;
+    // manager->invokeLater([]() {
+    //     std::cout << "Invoked" << std::endl;
+    // }, 3.0f);
 
-        if (ImGui::BeginMainMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Edit"))
-            {
-                if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-                if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-                ImGui::Separator();
-                if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-                if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-                if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
 
+    manager->addOnRenderCallback("menu1", []() {
         ImGui::Begin("Test Window");
-
-        ImGui::SliderFloat("float", &f, 1.0f, 5.9f);
-
-        ImGui::End();
-
-        ImGui::Begin("Test Window 2");
-
-        ImGui::SliderFloat("float", &f, 1.0f, 5.9f);
+        static float f1 = 2.0f;
+        ImGui::SliderFloat("float", &f1, 1.0f, 5.9f);
 
         ImGui::End();
     });
+    std::shared_ptr<Menu> menu = std::make_shared<Menu>(manager);
 
-    auto scene = manager.addScene("default");
-    scene->background = threepp::Color::aqua;
+    // auto scene = manager->addScene("default");
+    // scene->background = threepp::Color::aqua;
 
-    auto camera = threepp::PerspectiveCamera::create(75, manager.getCanvas()->aspect(), 0.1f, 1000);
-    camera->position.z = 5;
-    manager.addCamera("default", camera);
+    // auto camera = threepp::PerspectiveCamera::create(75, manager->getCanvas()->aspect(), 0.1f, 1000);
+    // camera->position.z = 5;
+    // manager->addCamera("default", camera);
 
-    manager.render();
+    manager->run();
 
     rclcpp::shutdown();
 

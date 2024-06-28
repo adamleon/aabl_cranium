@@ -1,15 +1,16 @@
-#include "threepp/extras/imgui/ImguiContext.hpp"
-#include "threepp/threepp.hpp"
+#include "cranium_gui/gui_manager.hpp"
 
-class Menu : public ImguiContext {
+class Menu  {
 public:
-    explicit Menu(const threepp::Canvas& canvas): ImguiContext(canvas.windowPtr()) {
+    Menu(const std::shared_ptr<GuiManager> manager) {
+        if(manager->addOnRenderCallback("menu", std::bind(&Menu::onRender, this)))
+            std::cout << "Callback added" << std::endl;
+        else
+            std::cout << "Callback not added" << std::endl;
     }
 
-    void onRender() override {
-        ImGui::SetNextWindowPos({0, 0}, 0, {0, 0});
-        ImGui::SetNextWindowSize({230, 0}, 0);
-
+private:
+    void onRender() {
         if (ImGui::BeginMainMenuBar())
         {
             if (ImGui::BeginMenu("File"))
@@ -28,21 +29,8 @@ public:
             }
             ImGui::EndMainMenuBar();
         }
-
-        ImGui::Begin("Test Window");
-
-        ImGui::SliderFloat("float", &f, 1.0f, 5.9f);
-
-        ImGui::End();
-
-        
-        ImGui::Begin("Test Window 2");
-
-        ImGui::SliderFloat("float", &f, 1.0f, 5.9f);
-
-        ImGui::End();
     }
 
-private:
-    float f = 2.0f;
+    float f1 = 2.0f;
+    float f2 = 2.0f;
 };

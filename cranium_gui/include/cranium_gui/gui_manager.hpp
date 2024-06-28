@@ -18,19 +18,7 @@
 class GuiManager {
 public:
     GuiManager() {
-        initCanvas();
-        initImgui();
     }
-
-    GuiManager(GuiManager&&) = delete;
-    GuiManager(const GuiManager&) = delete;
-    GuiManager& operator=(const GuiManager&) = delete;
-
-    std::shared_ptr<threepp::Canvas>& getCanvas() {
-        return GuiManager::s_canvas;
-    }
-
-    void render();
 
     bool addOnRenderCallback(std::string name, std::function<void()> callback) {
         if(callback == nullptr)
@@ -58,23 +46,19 @@ public:
         GuiManager::s_cameras[GuiManager::s_scenes[sceneName]] = camera;
     }
 
+    void run();
+
     ~GuiManager() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
 
+
 private:
-    inline static std::shared_ptr<threepp::Canvas> s_canvas;
-    inline static std::shared_ptr<threepp::GLRenderer> s_renderer;
     inline static std::unordered_map<std::string, std::shared_ptr<threepp::Scene>> s_scenes;
     inline static std::unordered_map<std::shared_ptr<threepp::Scene>, std::shared_ptr<threepp::Camera>> s_cameras;
     inline static std::unordered_map<std::string, std::function<void()>> s_onRenderCallbacks = {};
-
-    void initCanvas();
-    void initImgui();
-
-    void onAnimation();
 };
 
 #endif // GUI_CONTEXT_HPP
