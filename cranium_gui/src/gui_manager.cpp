@@ -2,7 +2,7 @@
 
 void GuiManager::initialize() {
     // Create a canvas and renderer
-    s_canvas = std::make_shared<threepp::Canvas>("threepp demo");
+    s_canvas = std::make_shared<threepp::Canvas>("Cranium");
     s_renderer = std::make_shared<threepp::GLRenderer>(s_canvas->size());
     s_renderer->autoClear = false;
 
@@ -47,6 +47,8 @@ void GuiManager::initialize() {
 }
 
 void GuiManager::render() {
+    if(!s_initialized) throw std::runtime_error("GUI has not been initialized");
+
     // Render the GUI
     s_canvas->animate([&]()
             {

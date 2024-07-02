@@ -33,7 +33,21 @@ install(TARGETS
   cranium_gui
   DESTINATION lib/${PROJECT_NAME})
 
+
 if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  # GuiManager test
+  ament_add_gtest(${PROJECT_NAME}_gui_manager_test 
+    test/gui_manager_test.cpp
+    src/gui_manager.cpp
+    include/cranium_gui/gui_manager.hpp)
+  target_include_directories(${PROJECT_NAME}_gui_manager_test PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+  )
+  ament_target_dependencies(${PROJECT_NAME}_gui_manager_test rclcpp std_msgs)
+  target_link_libraries(${PROJECT_NAME}_gui_manager_test imgui::imgui threepp::threepp)
+
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
