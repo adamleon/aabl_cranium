@@ -8,7 +8,7 @@
             "label": "build",
             "detail": "Build workspace (default)",
             "type": "shell",
-            "command": "colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DTHREEPP_USE_EXTERNAL_GLFW=ON -Wall -Wextra -Wpedantic -DCMAKE_TOOLCHAIN_FILE=/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "command": "colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DTHREEPP_USE_EXTERNAL_GLFW=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -Wall -Wextra -Wpedantic -DCMAKE_TOOLCHAIN_FILE=/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "group": {
                 "kind": "build",
                 "isDefault": true

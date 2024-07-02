@@ -6,12 +6,19 @@
                 "${workspaceFolder}/cranium_gui/include/**",
                 "/opt/ros/humble/include/**",
                 "/workspaces/dagros_ws/install/cranium_gui/**",
-                "/workspaces/dagros_ws/build/cranium_gui/vcpkg_installed/x64-linux/include/**"
+                "/workspaces/dagros_ws/build/cranium_gui/vcpkg_installed/x64-linux/include/**",
+                "/usr/include/c++/11",
+                "/usr/include/x86_64-linux-gnu/c++/11",
+                "/usr/include/c++/11/backward",
+                "/usr/lib/gcc/x86_64-linux-gnu/11/include",
+                " /usr/local/include",
+                " /usr/include/x86_64-linux-gnu",
+                "/usr/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c99",
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "intelliSenseMode": "clang-x64"
         }
     ],

@@ -11,7 +11,7 @@ set(THREEPP_BUILD_EXAMPLES OFF)
 FetchContent_Declare(
   cranium_gui
   GIT_REPOSITORY https://github.com/markaren/threepp.git
-  GIT_TAG 96778c41d9b396b28fef5e45b18636b1ef5926ba
+  GIT_TAG adc6601d0071ffdd5c4f8e818a840faba7177aac
 )
 FetchContent_MakeAvailable(cranium_gui)
 

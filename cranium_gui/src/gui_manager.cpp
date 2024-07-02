@@ -1,21 +1,19 @@
 #include "cranium_gui/gui_manager.hpp"
 
-void GuiManager::run() {
-    threepp::Canvas canvas("Canvas");
-    threepp::GLRenderer renderer(canvas.size());
-    
-    renderer.autoClear = false;
+void GuiManager::initialize() {
+    s_canvas = std::make_shared<threepp::Canvas>("threepp demo");
+    s_renderer = std::make_shared<threepp::GLRenderer>(s_canvas->size());
+    s_renderer->autoClear = false;
 
-    canvas.onWindowResize([&](threepp::WindowSize size) {
+    s_canvas->onWindowResize([&](threepp::WindowSize size) {
         for (auto &[scene, camera] : GuiManager::s_cameras) {
             if(typeid(*camera) == typeid(threepp::PerspectiveCamera))
                 (std::static_pointer_cast<threepp::PerspectiveCamera>(camera))->aspect = size.aspect();
             camera->updateProjectionMatrix();
         }
-        renderer.setSize(size);
+        s_renderer->setSize(size);
     });
-
-    
+ 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
@@ -37,41 +35,33 @@ void GuiManager::run() {
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 
-    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *)canvas.windowPtr(), true);
-#if EMSCRIPTEN
+    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)s_canvas->windowPtr(), true);
+#if EMSCRIPTEN 
     ImGui_ImplOpenGL3_Init("#version 300 es");
 #else
     ImGui_ImplOpenGL3_Init("#version 330 core");
 #endif
+}
 
-    canvas.animate([&]() {    
-    renderer.clear();
-    for (auto &[scene, camera] : s_cameras) {
-        renderer.render(*scene, *camera);
-    }
+void GuiManager::render() {
+    s_canvas->animate([&]()
+            {
+        s_renderer->clear();
+        for (auto &[scene, camera] : GuiManager::s_cameras)
+        {
+            s_renderer->render(*scene, *camera);
+        }
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-    for (auto &[name, callback] : s_onRenderCallbacks)
-    {
-        callback();
-    }
+        for (auto &[name, callback] : GuiManager::s_onRenderCallbacks)
+        {
+            callback();
+        }
 
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    ImGuiIO &io = ImGui::GetIO();
-
-    // Update and Render additional Platform Windows
-    // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-    //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        GLFWwindow* backup_current_context = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
-    }
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     });
 }
