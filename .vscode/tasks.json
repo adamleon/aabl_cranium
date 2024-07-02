@@ -14,7 +14,7 @@
                 "isDefault": true
             },
             "options": {
-                "cwd": "/workspaces/dagros_ws"
+                "cwd": "${workspaceFolder}/../.."
             },
             "problemMatcher": "$gcc"
         },
