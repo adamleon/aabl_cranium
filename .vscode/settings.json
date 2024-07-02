@@ -89,5 +89,6 @@
         "typeinfo": "cpp",
         "variant": "cpp"
     },
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "editor.rulers": [80]
 }

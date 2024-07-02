@@ -6,7 +6,6 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-// #include "threepp/utils/TaskManager.hpp"
 
 #include "cranium_gui/gui_menu.hpp"
 #include "cranium_gui/gui_manager.hpp"
@@ -42,6 +41,12 @@ private:
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
+
+    auto listener = std::make_shared<ListenerNode>();
+
+    std::thread listener_thread([&listener]() {
+        rclcpp::spin(listener);
+    });
 
     GuiManager manager = GuiManager();
     GuiManager manager2 = GuiManager();

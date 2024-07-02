@@ -5,10 +5,9 @@
 class ListenerNode : public rclcpp::Node
 {
 public:
-    ListenerNode(GuiManager manager) : Node("listener_node")
+    ListenerNode() : Node("listener_node")
     {
-        displayMessage = "No message received";
-        this->m_manager = manager;
+        m_manager = GuiManager();
         subscription_ = create_subscription<std_msgs::msg::String>(
             "/chatter",
             10, std::bind(&ListenerNode::listenCallback, this, std::placeholders::_1));
@@ -20,11 +19,10 @@ public:
     {
         RCLCPP_INFO(this->get_logger(), "Received message: %s", msg->data.c_str());
         message = msg->data;
-        // displayMessage = message;
-        // m_manager.invokeLater([this, msg]() {
-        //     std::cout << "Invoked Message" << std::endl;
-        //     this->displayMessage = msg->data;
-        // });
+        m_manager.invokeLater([this, msg]() {
+            std::cout << "Invoked Message" << std::endl;
+            this->displayMessage = msg->data;
+        });
 
     }
 
