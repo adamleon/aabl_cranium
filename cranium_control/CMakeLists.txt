@@ -12,10 +12,10 @@ find_package(ament_cmake_python REQUIRED)
 find_package(lbr_description REQUIRED)
 
 # install
-install(
-  DIRECTORY launch urdf
-  DESTINATION share/${PROJECT_NAME}
-)
+# install(
+#   DIRECTORY launch urdf
+#   DESTINATION share/${PROJECT_NAME}
+# )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

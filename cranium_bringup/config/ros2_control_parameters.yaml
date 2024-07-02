@@ -1,0 +1,4 @@
+system_interface:
+  ctrl_cfg_pkg: cranium_bringup
+  ctrl_cfg: config/lbr_controllers.yaml
+  
