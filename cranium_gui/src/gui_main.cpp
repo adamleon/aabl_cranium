@@ -4,6 +4,9 @@
 #include <string>
 #include <thread>
 
+#include "cranium_gui/imgui_joint_slider.hpp"
+
+
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "imgui.h"
@@ -54,8 +57,17 @@ int main(int argc, char **argv)
 
     manager2.addOnRenderCallback("menu1", []()
                                  {
-        bool show = true;
-        ImGui::ShowDemoWindow(&show); });
+        bool show = false;
+        ImGui::ShowDemoWindow(&show); 
+        ImGui::Begin("Joints");
+        static int joint1 = 90;
+        static int joint2 = 90;
+        static float f1 = 2.0f;
+        ImGui::JointSlider("Joint 1", &joint1, &joint2);
+        ImGui::FancySlider("Joint 2", &f1, -120.0f, 40.0f);
+        ImGui::SliderAngle("Joint 3", &f1, -180, 180);
+        ImGui::End();
+        });
 
     Menu menu = Menu();
     manager.render();
