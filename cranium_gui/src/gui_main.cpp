@@ -6,6 +6,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "imgui.h"
 
 #include "cranium_gui/gui_menu.hpp"
 #include "cranium_gui/gui_manager.hpp"
@@ -51,13 +52,10 @@ int main(int argc, char **argv)
     GuiManager manager = GuiManager();
     GuiManager manager2 = GuiManager();
 
-    manager2.addOnRenderCallback("menu1", []() {
-        ImGui::Begin("Test Window");
-        static float f1 = 2.0f;
-        ImGui::SliderFloat("float", &f1, 1.0f, 5.9f);
-
-        ImGui::End();
-    });
+    manager2.addOnRenderCallback("menu1", []()
+                                 {
+        bool show = true;
+        ImGui::ShowDemoWindow(&show); });
 
     Menu menu = Menu();
     manager.render();
