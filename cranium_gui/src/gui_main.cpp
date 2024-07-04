@@ -63,8 +63,12 @@ int main(int argc, char **argv)
         static int joint1 = 90;
         static int joint2 = 90;
         static float f1 = 2.0f;
+        static float s1 = 90.0f;
+        s1++;
+        if(s1 > 140.0f)
+            s1 = -170.0f;
         ImGui::JointSlider("Joint 1", &joint1, &joint2);
-        ImGui::FancySlider("Joint 2", &f1, -120.0f, 40.0f);
+        ImGui::FancySlider("Joint 2", &f1, &s1, -170.0f, 140.0f);
         ImGui::SliderAngle("Joint 3", &f1, -180, 180);
         ImGui::End();
         });

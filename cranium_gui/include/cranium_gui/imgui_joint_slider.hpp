@@ -2,6 +2,8 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 namespace ImGui
 {
@@ -80,11 +82,11 @@ namespace ImGui
         return changed;
     }
 
-    int FancySlider(const char *label, float *angle, float clamp_min, float clamp_max, ImGuiSliderFlags flags = 0)
+    int FancySlider(const char *label, float *angle, float *setpoint_angle, float clamp_min, float clamp_max, ImGuiSliderFlags flags = 0)
     {
         enum
         {
-            SLIDER_HEIGHT = 20
+            SLIDER_HEIGHT = 30
         };
         ImGuiContext &g = *GImGui;
 
@@ -94,32 +96,28 @@ namespace ImGui
             return false;
 
         const ImGuiID id = Window->GetID(label);
-        ImVec2 content_size(GetContentRegionAvail().x, SLIDER_HEIGHT);
+        ImVec2 slider_content_size(GetContentRegionAvail().x, SLIDER_HEIGHT);
+        ImRect bounding_box_slider(Window->DC.CursorPos, Window->DC.CursorPos + slider_content_size);
+        ImRect bounding_box_info(bounding_box_slider.Min + ImVec2(0, SLIDER_HEIGHT), bounding_box_slider.Max + ImVec2(0, SLIDER_HEIGHT));
+        ImRect bounding_box_total(bounding_box_slider.Min, bounding_box_info.Max);
 
-        ImRect bounding_box(Window->DC.CursorPos, Window->DC.CursorPos + content_size);
         ImVec2 min_clamp_area = ImVec2(
-            ((clamp_min + 180.0f) / 360.0f) * content_size.x,
+            ((clamp_min + 180.0f) / 360.0f) * slider_content_size.x,
             0);
         ImVec2 max_clamp_area = ImVec2(
-            ((clamp_max + 180.0f) / 360.0f) * content_size.x,
+            ((180.0f - clamp_max) / 360.0f) * slider_content_size.x,
             0);
         ImRect active_area = ImRect(
-            bounding_box.Min + min_clamp_area, 
-            bounding_box.Max - max_clamp_area);
+            bounding_box_slider.Min + min_clamp_area, 
+            bounding_box_slider.Max - max_clamp_area);
 
-        ItemSize(bounding_box);
-        if (!ItemAdd(bounding_box, id, &bounding_box))
+        ItemSize(bounding_box_total);
+        if (!ItemAdd(bounding_box_total, id, &bounding_box_total))
             return false;
 
-        RenderNavHighlight(bounding_box, id);
-        RenderFrame(bounding_box.Min, bounding_box.Max, GetColorU32(ImGuiCol_WindowBg, 1), false);
+        RenderNavHighlight(bounding_box_total, id);
+        RenderFrame(bounding_box_slider.Min, bounding_box_slider.Max, GetColorU32(ImGuiCol_WindowBg, 1), false);
         float half_slider_height = (float)SLIDER_HEIGHT * 0.5f;
-        DrawList->AddRectFilled(
-            bounding_box.Min, bounding_box.Max,
-            GetColorU32(ImGuiCol_Border), half_slider_height);
-        DrawList->AddRectFilled(
-            active_area.Min, active_area.Max,
-            GetColorU32(ImGuiCol_FrameBg), half_slider_height);
 
         const bool hovered = ItemHoverable(active_area, id, g.LastItemData.InFlags);
         const bool clicked = hovered && IsMouseClicked(0, ImGuiInputFlags_None, id);
@@ -144,10 +142,85 @@ namespace ImGui
         }
         PopStyleVar();
 
+        auto clamp_min_position = ImVec2(
+            ((clamp_min + 180.0f) / 360.0f) * slider_content_size.x, 
+            0);
+        auto clamp_max_position = ImVec2(
+            ((clamp_max + 180.0f) / 360.0f) * slider_content_size.x, 
+            0);
+
+        std::stringstream ss_clamp_min;
+        ss_clamp_min << std::fixed << std::setprecision(1) << clamp_min << "°";
+        ImVec2 clamp_min_size = CalcTextSize(ss_clamp_min.str().c_str());
+        ImVec2 clamp_min_text_position = 
+            bounding_box_info.Min + 
+            clamp_min_position + 
+            ImVec2(-clamp_min_size.x * 0.5f + half_slider_height, 0);
+
+        std::stringstream ss_clamp_max;
+        ss_clamp_max << std::fixed << std::setprecision(1) << clamp_max << "°";
+        ImVec2 clamp_max_size = CalcTextSize(ss_clamp_max.str().c_str());
+        ImVec2 clamp_max_text_position = 
+            bounding_box_info.Min + 
+            clamp_max_position + 
+            ImVec2(-clamp_max_size.x * 0.5f - half_slider_height, 0);
+        
+        ImVec2 clamp_offset = ImVec2(0, 1.8*half_slider_height - clamp_min_size.y);
+
+        auto setpoint_position = ImVec2(
+            ((*setpoint_angle + 180.0f) / 360.0f) * slider_content_size.x, 
+            0) + bounding_box_info.Min;
+        std::stringstream ss_setpoint;
+        ss_setpoint << std::fixed << std::setprecision(1) << *setpoint_angle << "°";
+        ImVec2 setpoint_size = CalcTextSize(ss_setpoint.str().c_str());
+        std::string tab_width = "-000.0°";
+        float setpoint_tab_width = CalcTextSize(tab_width.c_str()).x;
+
+        ImFont* font = GImGui->Font;
+        font->Scale = half_slider_height / font->FontSize;
+        PushFont(font);
+
+        DrawList->AddLine(
+            clamp_min_text_position + ImVec2(clamp_min_size.x*0.5f,0), 
+            clamp_min_text_position + ImVec2(clamp_min_size.x*0.5f,0) + clamp_offset, 
+            GetColorU32(ImGuiCol_Text),
+            0.2f*half_slider_height);
+        DrawList->AddText(clamp_min_text_position + clamp_offset,
+             GetColorU32(ImGuiCol_Text), ss_clamp_min.str().c_str());
+             
+        DrawList->AddLine(
+            clamp_max_text_position + ImVec2(clamp_max_size.x*0.5f,0), 
+            clamp_max_text_position + ImVec2(clamp_max_size.x*0.5f,0) + clamp_offset, 
+            GetColorU32(ImGuiCol_Text),
+            0.2f*half_slider_height);
+        DrawList->AddText(clamp_max_text_position + clamp_offset,
+             GetColorU32(ImGuiCol_Text), ss_clamp_max.str().c_str());
+
+        DrawList->AddRectFilled(
+            setpoint_position - ImVec2(setpoint_tab_width*0.55f, setpoint_size.y - 1.8f*half_slider_height),
+            setpoint_position + ImVec2(setpoint_tab_width*0.55f, SLIDER_HEIGHT),
+            GetColorU32(ImGuiCol_Text), 0.25f * half_slider_height);
+        DrawList->AddTriangleFilled(
+            setpoint_position + ImVec2(0, 0.4f) * half_slider_height,
+            setpoint_position + ImVec2(-0.66f, 1.0f) * half_slider_height,
+            setpoint_position + ImVec2(0.66f, 1.0f) * half_slider_height,
+            GetColorU32(ImGuiCol_Text));
+        DrawList->AddText(
+            setpoint_position - ImVec2(setpoint_size.x * 0.5f, 0) + clamp_offset,
+            GetColorU32(ImGuiCol_FrameBg), ss_setpoint.str().c_str());
+
+        // Render slider
+        DrawList->AddRectFilled(
+            bounding_box_slider.Min, bounding_box_slider.Max,
+            GetColorU32(ImGuiCol_Button), half_slider_height);
+        DrawList->AddRectFilled(
+            active_area.Min, active_area.Max,
+            GetColorU32(ImGuiCol_FrameBg), half_slider_height);
+
         // Render grab
         if (grab_bb.Max.x > grab_bb.Min.x)
-            Window->DrawList->AddCircleFilled(grab_bb.GetCenter(), half_slider_height - 1.0f, GetColorU32(GetActiveID() == id ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab));
-
+            DrawList->AddCircleFilled(grab_bb.GetCenter(),0.9f*half_slider_height, GetColorU32(GetActiveID() == id ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab));
+        PopFont();
         return value_changed;
     }
 }
