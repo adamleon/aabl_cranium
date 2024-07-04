@@ -84,6 +84,19 @@ namespace ImGui
 
     int FancySlider(const char *label, float *angle, float *setpoint_angle, float clamp_min, float clamp_max, ImGuiSliderFlags flags = 0)
     {
+        struct Config
+        {
+            const float slider_height = 30;
+            const ImVec2 setpoint_box_size = CalcTextSize("-000.0°");
+            const float info_height = setpoint_box_size.y * 1.2;
+            const float gap_height = 10;
+            const float half_slider_height = slider_height * 0.5f;
+            const float content_width = GetContentRegionAvail().x;
+            float anglePosition(float angle) const
+            {
+                return ((angle + 180.0f) / 360.0f) * content_width;
+            }
+        };
         enum
         {
             SLIDER_HEIGHT = 30
