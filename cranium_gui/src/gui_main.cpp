@@ -60,20 +60,19 @@ int main(int argc, char **argv)
         bool show = false;
         ImGui::ShowDemoWindow(&show); 
         ImGui::Begin("Joints");
-        static int joint1 = 90;
-        static int joint2 = 90;
         static float f1 = 2.0f;
         static float s1 = 90.0f;
+        static float f2 = -170.0f;
         s1++;
         if(s1 > 140.0f)
             s1 = -170.0f;
-        ImGui::JointSlider("Joint 1", &joint1, &joint2);
-        ImGui::FancySlider("Joint 2", &f1, &s1, -170.0f, 140.0f);
+        ImGui::JointSlider("Joint 2", &f1, &s1, &f2, -170.0f, 140.0f);
+        //ImGui::SameLine();
+        ImGui::Text("Current: %f", f1);
         ImGui::SliderAngle("Joint 3", &f1, -180, 180);
         ImGui::End();
         });
 
-    Menu menu = Menu();
     manager.render();
     rclcpp::shutdown();
 

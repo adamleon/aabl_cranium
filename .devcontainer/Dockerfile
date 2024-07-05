@@ -2,8 +2,8 @@ FROM osrf/ros:humble-desktop
 
 # General Utilities
 RUN apt update
-RUN apt install -y x11-apps && \
-    apt install -y mesa-utils
+RUN apt install -y x11-apps
+RUN apt install -y mesa-utils
 RUN apt install -y net-tools
 RUN apt install -y wget
 RUN apt install -y python3-vcstool
