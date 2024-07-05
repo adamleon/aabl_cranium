@@ -15,5 +15,6 @@
                 "yzhang.markdown-all-in-one"
 			]
 		}
-	}
+	},
+	"overrideCommand": true
 }

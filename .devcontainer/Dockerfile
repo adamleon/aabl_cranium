@@ -55,6 +55,6 @@ WORKDIR /workspaces/dagros_ws
 # WSL
 ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
 
-ENTRYPOINT ["/workspaces/dagros_ws/src/aabl_cranium/entrypoint.sh"]
-
-CMD [ "tail", "-f", "/dev/null" ]
+COPY entrypoint.sh /workspaces/entrypoint.sh
+RUN chmod +x /workspaces/entrypoint.sh
+ENTRYPOINT ["/workspaces/entrypoint.sh"]

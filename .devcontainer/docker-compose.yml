@@ -1,4 +1,3 @@
-version: '1'
 services:
   cranium:
     build:
@@ -13,4 +12,4 @@ services:
       - "/tmp/.X11-unix:/tmp/.X11-unix"
       - "/mnt/wslg:/mnt/wslg"
       - "/usr/lib/wsl:/usr/lib/wsl"
-    command: /bin/sh -c "while sleep 1000; do :; done"
+    command: "tail -f /dev/null"
